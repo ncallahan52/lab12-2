@@ -4,7 +4,7 @@ import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
-from flask import jsonify
+
 from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamError
@@ -121,8 +121,6 @@ class Server:
             self.logger.error(f"A fatal error occurred during execution: {e}")
             return jsonify(error="Internal server error"), 500
         
-
-
 def create_app(): # noqa
     server = Server()
     return server.app
