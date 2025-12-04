@@ -109,21 +109,27 @@ class Server:
         def genz():
             content = request.get_json()
             if not content:
-                return jsonify(error="No JSON body provided"), 400
-            analyzer_results = AppEntitiesConvertor.analyzer_results_iter(
+                raise BadRequest("Invalid request json")
+
+            analyzer_results = AppEntitiesConvertor.analyzer_results_from_json(
                 content.get("analyzer_results")
             )
-            genz_config = {
-                "DEFAULT": {
-                    "type": "genz"
-                }
-            }
+
+            genz_config = {}
+            for result in analyzer_results:
+                genz_config[result.entity_type] = {"type": "genz"}
+
+            genz_config["DEFAULT"] = {"type": "genz"}
+
+            genz_operators = AppEntitiesConvertor.operators_config_from_json(genz_config)
+
             result = self.anonymizer.anonymize(
-                text=content.get("text"),
+                text=content.get("text", ""),
                 analyzer_results=analyzer_results,
-                anonymizers_config=genz_config
+                operators=genz_operators
             )
-            return jsonify(result.to_json())
+
+            return Response(result.to_json(), mimetype="application/json")
 
         @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
