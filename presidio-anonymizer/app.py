@@ -4,7 +4,7 @@ import logging
 import os
 from logging.config import fileConfig
 from pathlib import Path
-
+from flask import jsonify
 from flask import Flask, Response, jsonify, request
 from presidio_anonymizer import AnonymizerEngine, DeanonymizeEngine
 from presidio_anonymizer.entities import InvalidParamError
@@ -95,6 +95,15 @@ class Server:
         def deanonymizers():
             """Return a list of supported deanonymizers."""
             return jsonify(self.deanonymize.get_deanonymizers())
+        
+        @self.app.route('/genz-preview', methods=['GET'])
+        def genz_preview():
+            output_dict = {
+                "example": "Call Emily at 577-988-1234",
+                "example_output": "Call GOAT at vibe check",
+                "description": "Example output of the genz anonymizer."
+            }
+            return jsonify(output_dict)
 
         @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
@@ -111,6 +120,8 @@ class Server:
         def server_error(e):
             self.logger.error(f"A fatal error occurred during execution: {e}")
             return jsonify(error="Internal server error"), 500
+        
+
 
 def create_app(): # noqa
     server = Server()
