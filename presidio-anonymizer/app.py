@@ -121,7 +121,9 @@ class Server:
 
             genz_config["DEFAULT"] = {"type": "genz"}
 
-            genz_operators = AppEntitiesConvertor.operators_config_from_json(genz_config)
+            genz_operators = AppEntitiesConvertor.operators_config_from_json(
+    genz_config
+)
 
             result = self.anonymizer.anonymize(
                 text=content.get("text", ""),
