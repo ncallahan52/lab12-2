@@ -105,6 +105,26 @@ class Server:
             }
             return jsonify(output_dict)
 
+        @self.app.route('/genz', methods=['GET', 'POST'])
+        def genz():
+            content = request.get_json()
+            if not content:
+                return jsonify(error="No JSON body provided"), 400
+            analyzer_results = AppEntitiesConvertor.analyzer_results_iter(
+                content.get("analyzer_results")
+            )
+            genz_config = {
+                "DEFAULT": {
+                    "type": "genz"
+                }
+            }
+            result = self.anonymizer.anonymize(
+                text=content.get("text"),
+                analyzer_results=analyzer_results,
+                anonymizers_config=genz_config
+            )
+            return jsonify(result.to_json())
+
         @self.app.errorhandler(InvalidParamError)
         def invalid_param(err):
             self.logger.warning(
