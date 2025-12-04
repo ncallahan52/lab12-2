@@ -95,7 +95,7 @@ class Server:
         def deanonymizers():
             """Return a list of supported deanonymizers."""
             return jsonify(self.deanonymize.get_deanonymizers())
-        
+
         @self.app.route('/genz-preview', methods=['GET'])
         def genz_preview():
             output_dict = {
@@ -120,7 +120,7 @@ class Server:
         def server_error(e):
             self.logger.error(f"A fatal error occurred during execution: {e}")
             return jsonify(error="Internal server error"), 500
-        
+
 def create_app(): # noqa
     server = Server()
     return server.app
