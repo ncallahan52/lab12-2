@@ -426,4 +426,31 @@ def test_given_anonymize_called_with_genz_then_expected_valid_response_returned(
 
     response_status, response_content = genz(request_body)
 
+    # check 1
     assert response_status == 200
+
+    # check 2
+    import json
+    response_data = json.loads(response_content)
+
+    # check 3
+    assert "text" in response_data
+    assert "items" in response_data
+
+    # check 4
+    assert isinstance(response_data["text"], str)
+    assert len(response_data["text"]) > 0
+
+    # check 5
+    assert "Emily Carter" not in response_data["text"]
+    assert "734-555-9284" not in response_data["text"]
+
+    # check 6                                                                                                  
+    assert len(response_data["items"]) == 2
+
+    # check 7
+    for item in response_data["items"]:
+        assert "start" in item
+        assert "end" in item
+        assert "entity_type" in item
+        assert "operator" in item
